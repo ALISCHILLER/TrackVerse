@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway", "ApiGateway\ApiGateway.csproj", "{8D55919F-689B-421C-8814-3D3BEAE746EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel", "SharedKernel\SharedKernel.csproj", "{8C5B5094-1D2A-46FB-8DB8-BD03513A4361}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8D55919F-689B-421C-8814-3D3BEAE746EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D55919F-689B-421C-8814-3D3BEAE746EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D55919F-689B-421C-8814-3D3BEAE746EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D55919F-689B-421C-8814-3D3BEAE746EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C5B5094-1D2A-46FB-8DB8-BD03513A4361}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C5B5094-1D2A-46FB-8DB8-BD03513A4361}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C5B5094-1D2A-46FB-8DB8-BD03513A4361}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C5B5094-1D2A-46FB-8DB8-BD03513A4361}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
