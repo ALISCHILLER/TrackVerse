@@ -1,85 +1,81 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace SharedKernel.Common
 {
     /// <summary>
-    /// کلاس عمومی برای مدیریت نتایج عملیات‌ها.
+    /// نتیجه عملیات بدون داده خروجی.
     /// </summary>
-    /// <typeparam name="T">نوع داده‌ای که نتیجه برمی‌گرداند.</typeparam>
-    public class Result<T>
+    public class Result
     {
         /// <summary>
-        /// وضعیت موفقیت عملیات.
+        /// موفقیت یا شکست عملیات.
         /// </summary>
         public bool IsSuccess { get; }
 
         /// <summary>
-        /// پیام مرتبط با نتیجه.
+        /// پیام نتیجه عملیات.
         /// </summary>
         public string Message { get; }
 
         /// <summary>
-        /// داده‌های برگشتی در صورت موفقیت.
+        /// کد وضعیت HTTP مرتبط.
         /// </summary>
-        public T Data { get; }
+        public int HttpStatusCode { get; }
 
         /// <summary>
-        /// خطا (در صورت وجود).
+        /// خطای داخلی در صورت شکست عملیات.
         /// </summary>
-        public Exception Exception { get; }
+        [JsonIgnore]
+        public Exception? Exception { get; }
 
         /// <summary>
-        /// سازنده برای نتیجه موفق.
+        /// کد خطای داخلی جهت تشخیص برنامه‌نویسی (مثلاً: USER_NOT_FOUND).
         /// </summary>
-        /// <param name="data">داده‌های برگشتی.</param>
-        /// <param name="message">پیام موفقیت.</param>
-        private Result(T data, string message)
+        public string? ErrorCode { get; }
+
+        /// <summary>
+        /// لیست خطاهای اعتبارسنجی.
+        /// </summary>
+        public Dictionary<string, string[]>? ValidationErrors { get; init; }
+
+        protected Result(
+            bool isSuccess,
+            string message,
+            int httpStatusCode,
+            string? errorCode = null,
+            Exception? exception = null,
+            Dictionary<string, string[]>? validationErrors = null)
         {
-            IsSuccess = true;
-            Data = data;
+            IsSuccess = isSuccess;
             Message = message;
-        }
-
-        /// <summary>
-        /// سازنده برای نتیجه ناموفق.
-        /// </summary>
-        /// <param name="message">پیام خطا.</param>
-        /// <param name="exception">خطای رخ‌داده (اختیاری).</param>
-        private Result(string message, Exception exception = null)
-        {
-            IsSuccess = false;
-            Message = message;
+            HttpStatusCode = httpStatusCode;
             Exception = exception;
+            ErrorCode = errorCode;
+            ValidationErrors = validationErrors;
         }
 
-        /// <summary>
-        /// ایجاد نتیجه موفق.
-        /// </summary>
-        /// <param name="data">داده‌های برگشتی.</param>
-        /// <param name="message">پیام موفقیت.</param>
-        public static Result<T> Success(T data, string message = "Operation completed successfully.")
+        public static Result Success(string message = "عملیات با موفقیت انجام شد.", int httpStatusCode = 200)
         {
-            return new Result<T>(data, message);
+            return new Result(true, message, httpStatusCode);
         }
 
-        /// <summary>
-        /// ایجاد نتیجه ناموفق.
-        /// </summary>
-        /// <param name="message">پیام خطا.</param>
-        /// <param name="exception">خطای رخ‌داده (اختیاری).</param>
-        public static Result<T> Failure(string message, Exception exception = null)
+        public static Result Failure(string message, int httpStatusCode = 500, string? errorCode = null, Exception? exception = null)
         {
-            return new Result<T>(message, exception);
+            return new Result(false, message, httpStatusCode, errorCode, exception);
         }
 
-        /// <summary>
-        /// نمایش رشته‌ای نتیجه.
-        /// </summary>
+        public static Result Failure(string message, Dictionary<string, string[]> validationErrors)
+        {
+            return new Result(false, message, 400, errorCode: "VALIDATION_ERROR", validationErrors: validationErrors);
+        }
+
         public override string ToString()
         {
             return IsSuccess
-                ? $"Success: {Message}"
-                : $"Failure: {Message}{(Exception != null ? $" - Exception: {Exception.Message}" : "")}";
+                ? $"موفق ({HttpStatusCode}): {Message}"
+                : $"ناموفق ({HttpStatusCode}): {Message} | خطا: {ErrorCode} - {Exception?.Message}";
         }
     }
 }
