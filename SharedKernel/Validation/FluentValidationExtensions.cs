@@ -1,8 +1,10 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
-using SharedKernel.Validation.Localizations;
 using System.Reflection;
+using System.Linq;
+using Microsoft.Extensions.Logging;
+using System;
 
 namespace SharedKernel.Validation
 {
@@ -14,6 +16,9 @@ namespace SharedKernel.Validation
         /// <summary>
         /// افزودن FluentValidation به سرویس‌های Dependency Injection.
         /// </summary>
+        /// <param name="services">سرویس‌هایی که FluentValidation باید به آن اضافه شود.</param>
+        /// <param name="assemblies">اسمبلی‌هایی که شامل Validatorها هستند.</param>
+        /// <returns>خدمات به‌روز شده با FluentValidation.</returns>
         public static IServiceCollection AddCustomFluentValidation(
             this IServiceCollection services,
             params Assembly[] assemblies)
@@ -24,19 +29,15 @@ namespace SharedKernel.Validation
             if (assemblies == null || assemblies.Length == 0)
                 throw new ArgumentException("حداقل یک اسمبلی باید مشخص شود.", nameof(assemblies));
 
-            // افزودن Validatorها از اسمبلی‌های مشخص‌شده
             services.AddValidatorsFromAssemblies(assemblies);
 
-            // ادغام FluentValidation با ASP.NET Core MVC
             services.AddFluentValidationAutoValidation(options =>
             {
-                options.DisableDataAnnotationsValidation = true; // غیرفعال کردن DataAnnotations
+                options.DisableDataAnnotationsValidation = true;
             });
 
-            // پشتیبانی از اعتبارسنجی کلاینت‌ها
             services.AddFluentValidationClientsideAdapters();
 
-            // اضافه کردن Interceptor برای پشتیبانی از Localization
             services.AddSingleton<IValidatorInterceptor, CustomValidatorInterceptor>();
 
             return services;
@@ -45,7 +46,11 @@ namespace SharedKernel.Validation
         /// <summary>
         /// اعتبارسنجی دستی یک شیء با استفاده از FluentValidation.
         /// </summary>
-        public static void Validate<T>(this IValidator<T> validator, T instance)
+        /// <typeparam name="T">نوع شیء برای اعتبارسنجی.</typeparam>
+        /// <param name="validator">شیء اعتبارسنجی برای اجرای فرآیند.</param>
+        /// <param name="instance">شیء مورد نظر برای اعتبارسنجی.</param>
+        /// <param name="logger">لاگر جهت ثبت خطاها (اختیاری).</param>
+        public static void Validate<T>(this IValidator<T> validator, T instance, ILogger logger = null)
         {
             if (validator == null)
                 throw new ArgumentNullException(nameof(validator));
@@ -54,15 +59,39 @@ namespace SharedKernel.Validation
 
             if (!result.IsValid)
             {
-                var errors = result.Errors
+                var errorMessages = result.Errors
                     .GroupBy(e => e.PropertyName)
-                    .ToDictionary(
-                        g => g.Key,
-                        g => g.Select(e => e.ErrorMessage).ToArray()
-                    );
+                    .Select(g => new
+                    {
+                        Property = g.Key,
+                        Messages = g.Select(e => e.ErrorMessage).ToArray()
+                    })
+                    .Select(e => $"{e.Property}: {string.Join(", ", e.Messages)}")
+                    .ToList();
 
-                throw new ValidationException(errors);
+                var fullErrorMessage = string.Join("; ", errorMessages);
+
+                logger?.LogError($"Validation failed: {fullErrorMessage}");
+
+                // حالا استثناء اختصاصی پرتاب کن
+                throw new CustomValidationException(result.Errors);
             }
         }
+
     }
 }
+
+
+
+//نمونه‌ای از استفاده در کد:
+//مثلا توی یک سرویس بخوای دستی ولیدیت کنی:
+//csharp
+//Copy
+//Edit
+//public async Task CreateUserAsync(UserDto userDto)
+//{
+//    var validator = new UserDtoValidator();
+//    validator.Validate(userDto, _logger); // اگر ایرادی باشه، CustomValidationException پرتاب میشه
+
+//    // ادامه عملیات ذخیره
+//}

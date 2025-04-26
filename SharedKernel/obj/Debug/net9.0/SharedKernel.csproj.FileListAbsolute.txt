@@ -1,0 +1,13 @@
+E:\project-zar\custom\.net\TrackVerse.sln\SharedKernel\obj\Debug\net9.0\SharedKernel.csproj.AssemblyReference.cache
+E:\project-zar\custom\.net\TrackVerse.sln\SharedKernel\obj\Debug\net9.0\SharedKernel.GeneratedMSBuildEditorConfig.editorconfig
+E:\project-zar\custom\.net\TrackVerse.sln\SharedKernel\obj\Debug\net9.0\SharedKernel.AssemblyInfoInputs.cache
+E:\project-zar\custom\.net\TrackVerse.sln\SharedKernel\obj\Debug\net9.0\SharedKernel.AssemblyInfo.cs
+E:\project-zar\custom\.net\TrackVerse.sln\SharedKernel\obj\Debug\net9.0\SharedKernel.csproj.CoreCompileInputs.cache
+E:\project-zar\custom\.net\TrackVerse.sln\SharedKernel\obj\Debug\net9.0\SharedKernel.sourcelink.json
+E:\project-zar\custom\.net\TrackVerse.sln\SharedKernel\bin\Debug\net9.0\SharedKernel.deps.json
+E:\project-zar\custom\.net\TrackVerse.sln\SharedKernel\bin\Debug\net9.0\SharedKernel.dll
+E:\project-zar\custom\.net\TrackVerse.sln\SharedKernel\bin\Debug\net9.0\SharedKernel.pdb
+E:\project-zar\custom\.net\TrackVerse.sln\SharedKernel\obj\Debug\net9.0\SharedKernel.dll
+E:\project-zar\custom\.net\TrackVerse.sln\SharedKernel\obj\Debug\net9.0\refint\SharedKernel.dll
+E:\project-zar\custom\.net\TrackVerse.sln\SharedKernel\obj\Debug\net9.0\SharedKernel.pdb
+E:\project-zar\custom\.net\TrackVerse.sln\SharedKernel\obj\Debug\net9.0\ref\SharedKernel.dll

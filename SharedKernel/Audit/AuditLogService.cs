@@ -1,60 +1,58 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SharedKernel.Audit
 {
-    /// <summary>
-    /// سرویس لاگ‌گیری تغییرات.
-    /// </summary>
-    public class AuditLogService
+    public class AuditLogS
     {
-        private readonly Repositories.IAuditRepository _auditRepository;
+        public List<AuditChangeS> Changes { get; set; } = new List<AuditChangeS>();
+    }
 
-        /// <summary>
-        /// سازنده سرویس لاگ‌گیری.
-        /// </summary>
-        /// <param name="auditRepository">Repository برای ذخیره لاگ‌ها.</param>
-        public AuditLogService(Repositories.IAuditRepository auditRepository)
+    public class AuditChangeS
+    {
+        public string PropertyName { get; set; }
+        public string OldValue { get; set; }
+        public string NewValue { get; set; }
+    }
+
+    public class AuditService
+    {
+        public void SaveChanges(IEnumerable<AuditChangeS> changes)
         {
-            // تزریق وابستگی IAuditRepository برای ذخیره لاگ‌ها در دیتابیس
-            _auditRepository = auditRepository;
+            foreach (var change in changes)
+            {
+                Console.WriteLine($"Property: {change.PropertyName}, Old: {change.OldValue}, New: {change.NewValue}");
+            }
         }
 
-        /// <summary>
-        /// ثبت تغییرات در دیتابیس.
-        /// </summary>
-        /// <typeparam name="T">نوع موجودیت (Entity).</typeparam>
-        /// <param name="oldEntity">نسخه قدیمی موجودیت (برای عملیات Update و Delete).</param>
-        /// <param name="newEntity">نسخه جدید موجودیت (برای عملیات Create و Update).</param>
-        /// <param name="changedBy">شناسه کاربر عامل.</param>
-        /// <param name="entityId">شناسه موجودیت.</param>
-        /// <param name="operationType">نوع عملیات (Create, Update, Delete).</param>
-        /// <param name="ipAddress">آدرس IP کاربر (اختیاری).</param>
-        /// <param name="userAgent">User-Agent کاربر (اختیاری).</param>
-        /// <param name="reason">دلیل تغییر (اختیاری).</param>
-        public async Task LogChangesAsync<T>(
-            T oldEntity,
-            T newEntity,
-            string changedBy,
-            string entityId,
-            string operationType,
-            string ipAddress = null,
-            string userAgent = null,
-            string reason = null)
+        public void ProcessAuditLog(AuditLogS auditLog)
         {
-            // استفاده از AuditTrailHelper برای استخراج تغییرات بین نسخه قدیمی و جدید
-            var changes = Helpers.AuditTrailHelper.GetAuditChanges(
-                oldEntity,
-                newEntity,
-                changedBy,
-                entityId,
-                operationType,
-                ipAddress,
-                userAgent,
-                reason);
+            if (auditLog.Changes.Count() == 0) // فراخوانی متد Count()
+            {
+                Console.WriteLine("No changes to save.");
+                return;
+            }
 
-            // ذخیره تغییرات در دیتابیس
-            await _auditRepository.SaveAsync(changes);
+            SaveChanges(auditLog.Changes); // ارسال لیست تغییرات
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var auditLog = new AuditLogS
+            {
+                Changes = new List<AuditChangeS>
+                {
+                    new AuditChangeS { PropertyName = "Email", OldValue = "old@example.com", NewValue = "new@example.com" },
+                    new AuditChangeS { PropertyName = "Name", OldValue = "John", NewValue = "Doe" }
+                }
+            };
+
+            var auditService = new AuditService();
+            auditService.ProcessAuditLog(auditLog);
         }
     }
 }
