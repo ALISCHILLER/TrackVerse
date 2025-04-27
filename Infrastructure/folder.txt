@@ -1,0 +1,149 @@
+/Infrastructure/
+│
+├── /Common/                           # ابزارها و تنظیمات عمومی قابل استفاده در کل سیستم
+│   ├── /Caching/                      # سرویس کش و کلیدهای دسته‌بندی شده
+│   │   ├── /Keys/                     # کلیدهای کش، بر اساس حوزه‌های مختلف
+│   │   │   ├── CacheKeys.cs            # کلیدهای عمومی کش
+│   │   │   ├── UserCacheKeys.cs        # کلیدهای کش مربوط به کاربران
+│   │   │   ├── ProductCacheKeys.cs     # کلیدهای کش مربوط به محصولات
+│   │   │   └── SystemCacheKeys.cs      # کلیدهای کش مربوط به تنظیمات سیستمی
+│   │   ├── Interfaces/
+│   │   │   └── ICacheService.cs        # اینترفیس سرویس کش
+│   │   └── CacheService.cs             # پیاده‌سازی سرویس کش (مثلاً Redis یا Memory)
+│   │
+│   ├── /Settings/                     # کلاس‌های مدل تنظیمات (خوانده شده از appsettings.json)
+│   │   ├── AppSettings.cs              # تنظیمات کلی برنامه
+│   │   ├── CacheSettings.cs            # تنظیمات کش
+│   │   ├── JwtSettings.cs              # تنظیمات JWT
+│   │   ├── EncryptionSettings.cs       # تنظیمات رمزنگاری داده
+│   │   ├── FileStorageSettings.cs      # تنظیمات ذخیره‌سازی فایل
+│   │   └── EmailSettings.cs            # تنظیمات ارسال ایمیل
+│   │
+│   ├── /Constants/                    # ثابت‌های سراسری پروژه
+│   │   ├── ApplicationConstants.cs     # ثابت‌های عمومی اپلیکیشن
+│   │   ├── ClaimTypesConstants.cs      # ثابت‌های مربوط به Claims در احراز هویت
+│   │   ├── ErrorMessages.cs            # پیام‌های خطای استاندارد شده
+│   │   ├── RegexPatterns.cs            # الگوهای Regex کاربردی
+│   │   └── HeaderNames.cs              # نام هدرهای HTTP سفارشی
+│   │
+│   └── /Helpers/                       # ابزارهای کمکی (Helper)
+│       ├── Guard.cs                    # اعتبارسنجی آرگومان‌ها و مقادیر ورودی
+│       ├── DateTimeHelper.cs           # عملیات کمکی روی تاریخ و زمان
+│       ├── GuidHelper.cs               # تولید و اعتبارسنجی شناسه‌های GUID
+│       ├── StringHelper.cs             # متدهای کمکی مربوط به رشته‌ها
+│       ├── CryptoRandomHelper.cs       # تولید مقادیر تصادفی رمزنگاری شده
+│       ├── UrlHelper.cs                # ساخت و ویرایش URL ها
+│       ├── PasswordGenerator.cs        # تولید رمز عبور ایمن
+│       └── PaginationHelper.cs         # مدیریت صفحه‌بندی داده‌ها
+│
+├── /Persistence/                      # لایه دسترسی به داده (Data Access Layer)
+│   ├── /Contexts/                     # DbContext ها برای دیتابیس
+│   │   ├── ApplicationDbContext.cs     # کانتکست اصلی اپلیکیشن
+│   │   ├── IdentityDbContext.cs        # کانتکست مدیریت هویت و احراز هویت
+│   │   ├── ReadOnlyDbContext.cs        # کانتکست فقط خواندنی برای عملیات بهینه
+│   │   └── /Migrations/                # مهاجرت‌های دیتابیس
+│   │
+│   ├── /Repositories/                 # Repository Pattern برای کار با جداول دیتابیس
+│   │   ├── /User/                      # مخزن کاربر
+│   │   │   ├── IUserRepository.cs
+│   │   │   └── UserRepository.cs
+│   │   ├── /Product/                   # مخزن محصول
+│   │   │   ├── IProductRepository.cs
+│   │   │   └── ProductRepository.cs
+│   │   ├── /Order/                     # مخزن سفارش
+│   │   │   ├── IOrderRepository.cs
+│   │   │   └── OrderRepository.cs
+│   │   └── /System/                    # مخزن داده‌های سیستمی
+│   │       ├── ISystemRepository.cs
+│   │       └── SystemRepository.cs
+│   │
+│   ├── /Configurations/               # Fluent API Mapping برای موجودیت‌ها
+│   │   ├── UserConfiguration.cs
+│   │   ├── ProductConfiguration.cs
+│   │   ├── OrderConfiguration.cs
+│   │   ├── SystemConfiguration.cs
+│   │   └── BaseEntityConfiguration.cs
+│   │
+│   ├── /Interceptors/                 # مداخله‌گرهای EF Core
+│   │   ├── AuditableEntitySaveChangesInterceptor.cs  # ذخیره خودکار تاریخ ایجاد/ویرایش
+│   │   ├── SoftDeleteInterceptor.cs    # حذف منطقی داده‌ها
+│   │   └── EncryptionInterceptor.cs    # رمزنگاری خودکار فیلدهای حساس در پایگاه داده
+│   │
+│   └── /Specifications/               # پیاده‌سازی Specification Pattern
+│       ├── ISpecification.cs
+│       └── BaseSpecification.cs
+│
+├── /Security/                         # لایه امنیت و رمزنگاری داده‌ها
+│   ├── /Encryption/                   # رمزنگاری داده‌ها
+│   │   ├── Interfaces/
+│   │   │   └── IEncryptionService.cs
+│   │   ├── EncryptionService.cs
+│   │   └── EncryptionSettings.cs
+│   │
+│   ├── /Hashing/                      # سرویس‌های Hash (مثلاً bcrypt, sha256)
+│   │   ├── Interfaces/
+│   │   │   └── IHashingService.cs
+│   │   ├── BcryptHashingService.cs
+│   │   └── Sha256HashingService.cs
+│   │
+│   ├── /JWT/                          # مدیریت JWT Token ها
+│   │   ├── Interfaces/
+│   │   │   └── IJwtTokenService.cs
+│   │   ├── JwtTokenService.cs
+│   │   ├── JwtValidator.cs
+│   │   └── JwtSettings.cs
+│   │
+│   └── /Authentication/               # احراز هویت کاربران
+│       ├── AuthenticationService.cs
+│       ├── AuthenticationConstants.cs
+│       └── TwoFactorAuthenticationService.cs
+│
+├── /Messaging/                        # مدیریت ارتباطات بین‌سرویسی (Event Bus و Outbox)
+│   ├── /Events/                       # پیاده‌سازی Event Bus داخلی
+│   │   ├── IntegrationEvent.cs
+│   │   ├── IEventBus.cs
+│   │   └── EventBus.cs
+│   │
+│   ├── /BackgroundTasks/              # صف‌بندی کارهای پس‌زمینه (Background Jobs)
+│   │   ├── IBackgroundTaskQueue.cs
+│   │   ├── BackgroundTaskQueue.cs
+│   │   ├── HostedBackgroundService.cs
+│   │   └── DelayedJobScheduler.cs
+│   │
+│   └── /Outbox/                       # پیاده‌سازی Outbox Pattern برای اطمینان از ارسال پیام‌ها
+│       ├── OutboxMessage.cs
+│       ├── IOutboxService.cs
+│       └── OutboxService.cs
+│
+├── /Files/                            # مدیریت ذخیره‌سازی فایل‌ها
+│   ├── Interfaces/
+│   │   └── IFileStorageService.cs      # اینترفیس ذخیره فایل
+│   ├── LocalFileStorageService.cs      # ذخیره فایل به صورت محلی
+│   ├── CloudFileStorageService.cs      # ذخیره فایل در فضای ابری
+│   ├── FileValidator.cs                # اعتبارسنجی فایل‌های ورودی
+│   └── FileMetadata.cs                 # متادیتاهای مرتبط با فایل‌ها
+│
+├── /Email/                             # ارسال ایمیل و مدیریت قالب‌های ایمیل
+│   ├── Interfaces/
+│   │   └── IEmailSender.cs
+│   ├── EmailSender.cs                  # سرویس ارسال ایمیل
+│   └── EmailTemplateService.cs         # سرویس مدیریت قالب‌های ایمیل
+│
+├── /Monitoring/                        # مانیتورینگ و سلامت سیستم
+│   ├── /HealthChecks/                  # چک‌های سلامت
+│   │   ├── DatabaseHealthCheck.cs
+│   │   ├── CacheHealthCheck.cs
+│   │   └── MessagingHealthCheck.cs
+│   │
+│   └── /Metrics/                       # اکسپورت متریک‌ها به Prometheus یا سایر سرویس‌ها
+│       ├── PrometheusMetricsExporter.cs
+│       └── ApplicationMetrics.cs
+│
+
+
+
+
+ساختار کامل پروژه مدیریت دستگاه‌های GPS با ظرفیت پشتیبانی از 10 میلیون کاربر و بیشتر
+در ادامه، ساختار کامل پوشه‌بندی پروژه به همراه تمام ماژول‌ها، فایل‌ها، توضیحات جامع، وابستگی‌ها، و نیازمندی‌های خاص ارائه شده است. این ساختار شامل تمام ویژگی‌های درخواستی مانند MQTT ، SignalR ، RateLimiter.Redis ، IdentityServer/OpenIddict ، ElasticSearch + Kibana ، Circuit Breaker و Retry با Polly ، Prometheus + Grafana ، Swagger ، و CQRS + Event Sourcing است.
+
+

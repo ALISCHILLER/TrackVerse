@@ -7,18 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Exceptions\" />
-    <Folder Include="Common\Helpers\" />
-    <Folder Include="Common\Utilities\" />
-    <Folder Include="Data\" />
-    <Folder Include="Caching\" />
-    <Folder Include="Messaging\" />
-    <Folder Include="HealthChecks\" />
-    <Folder Include="Logging\" />
-    <Folder Include="Extensions\" />
-    <Folder Include="Security\" />
-    <Folder Include="Services\" />
-    <Folder Include="Options\" />
+    <PackageReference Include="StackExchange.Redis" Version="2.8.31" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Persistence\" />
   </ItemGroup>
 
 </Project>
